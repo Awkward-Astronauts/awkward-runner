@@ -1,6 +1,21 @@
 import { AllocatorCharacterArray, Character, CharacterAllocator, CharacterMeta } from "./character";
-import { dino_layout, stone_layout, themes, cloud_layout, pit_layout, bird_layout, cactus_layout, retry_layout, star_layout } from "./layouts";
+import { layouts } from "./layouts";
 import { applyVelocityToPosition, isCollided, Position, Velocity } from "./physics";
+
+require('./style.css');
+
+const {
+    stone_layout,
+    themes,
+    pit_layout,
+    retry_layout,
+    star_layout,
+    aa_layout,
+    alien_layout,
+    aa_star_layout,
+    rock_layout,
+    moon_layout
+} = layouts;
 
 const canvas = document.getElementById("board");
 const canvas_ctx = canvas.getContext('2d');
@@ -9,12 +24,12 @@ const CELL_SIZE = 2;
 const ROWS = 300;
 let COLUMNS = 1000;
 const FLOOR_VELOCITY = new Velocity(0, -7);
-let CACTUS_MIN_GAP = 20;
+let ROCK_MIN_GAP = 20;
 
 if (screen.width < COLUMNS) {
     COLUMNS = screen.width;
     FLOOR_VELOCITY.add(new Velocity(0, 2));
-    CACTUS_MIN_GAP = 50;
+    ROCK_MIN_GAP = 50;
 }
 
 const DINO_INITIAL_TRUST = new Velocity(-11, 0);
@@ -44,13 +59,6 @@ let harmless_character_allocator = [
     ),
     new CharacterAllocator(
         new AllocatorCharacterArray()
-            .add_character(new CharacterMeta([cloud_layout], 0, new Position(100, COLUMNS), new Velocity(0, -1)), 0.9)
-            .add_character(new CharacterMeta([cloud_layout], 0, new Position(135, COLUMNS), new Velocity(0, -1)), 0.85)
-            .add_character(new CharacterMeta([cloud_layout], 0, new Position(150, COLUMNS), new Velocity(0, -1)), 0.8)
-        , 350, 300
-    ),
-    new CharacterAllocator(
-        new AllocatorCharacterArray()
             .add_character(new CharacterMeta([star_layout.small_s1], 0, new Position(90, COLUMNS), new Velocity(0, -0.3)), 0.9)
             .add_character(new CharacterMeta([star_layout.small_s2], 0, new Position(125, COLUMNS), new Velocity(0, -0.3)), 0.85)
             .add_character(new CharacterMeta([star_layout.small_s1], 0, new Position(140, COLUMNS), new Velocity(0, -0.3)), 0.8)
@@ -66,27 +74,33 @@ let harmless_character_allocator = [
 ];
 
 let harmfull_character_allocator = [
+    // new CharacterAllocator(
+    //     new AllocatorCharacterArray()
+    //         .add_character(new CharacterMeta([cactus_layout.small_d1], 0, new Position(201, COLUMNS), FLOOR_VELOCITY), 0.8)
+    //         .add_character(new CharacterMeta([cactus_layout.small_s1], 0, new Position(201, COLUMNS), FLOOR_VELOCITY), 0.7)
+    //         .add_character(new CharacterMeta([cactus_layout.small_s2], 0, new Position(201, COLUMNS), FLOOR_VELOCITY), 0.6)
+    //         .add_character(new CharacterMeta([cactus_layout.medium_d1], 0, new Position(193, COLUMNS), FLOOR_VELOCITY), 0.5)
+    //         .add_character(new CharacterMeta([cactus_layout.medium_s1], 0, new Position(193, COLUMNS), FLOOR_VELOCITY), 0.4)
+    //         .add_character(new CharacterMeta([cactus_layout.medium_s2], 0, new Position(193, COLUMNS), FLOOR_VELOCITY), 0.3)
+    //
+    //     , CACTUS_MIN_GAP, 100
+    // ),
     new CharacterAllocator(
         new AllocatorCharacterArray()
-            .add_character(new CharacterMeta([cactus_layout.small_d1], 0, new Position(201, COLUMNS), FLOOR_VELOCITY), 0.8)
-            .add_character(new CharacterMeta([cactus_layout.small_s1], 0, new Position(201, COLUMNS), FLOOR_VELOCITY), 0.7)
-            .add_character(new CharacterMeta([cactus_layout.small_s2], 0, new Position(201, COLUMNS), FLOOR_VELOCITY), 0.6)
-            .add_character(new CharacterMeta([cactus_layout.medium_d1], 0, new Position(193, COLUMNS), FLOOR_VELOCITY), 0.5)
-            .add_character(new CharacterMeta([cactus_layout.medium_s1], 0, new Position(193, COLUMNS), FLOOR_VELOCITY), 0.4)
-            .add_character(new CharacterMeta([cactus_layout.medium_s2], 0, new Position(193, COLUMNS), FLOOR_VELOCITY), 0.3)
-
-        , CACTUS_MIN_GAP, 100
+            .add_character(new CharacterMeta([rock_layout.rock_short], 0, new Position(211, COLUMNS), FLOOR_VELOCITY), 0.8)
+            .add_character(new CharacterMeta([rock_layout.rock_tall], 0, new Position(195, COLUMNS), FLOOR_VELOCITY), 0.7)
+        , ROCK_MIN_GAP, 100
     ),
     new CharacterAllocator(
         new AllocatorCharacterArray()
-            .add_character(new CharacterMeta(bird_layout.fly, 0, new Position(170, COLUMNS), FLOOR_VELOCITY.clone().add(new Velocity(0, -1))), 0.98)
-            .add_character(new CharacterMeta(bird_layout.fly, 0, new Position(190, COLUMNS), FLOOR_VELOCITY.clone().add(new Velocity(0, -1))), 0.9)
+            .add_character(new CharacterMeta([alien_layout], 0, new Position(170, COLUMNS), FLOOR_VELOCITY.clone().add(new Velocity(0, -2))), 0.98)
+            .add_character(new CharacterMeta([alien_layout], 0, new Position(190, COLUMNS), FLOOR_VELOCITY.clone().add(new Velocity(0, -1))), 0.9)
         , 500, 50
     )
 ]
 
 function initialize() {
-    current_theme = themes.classic;
+    current_theme = themes.dark;
     cumulative_velocity = new Velocity(0, 0);
     game_over = false;
     game_score = 0;
@@ -96,7 +110,7 @@ function initialize() {
 
     harmless_characters_pool = [];
     harmfull_characters_pool = [
-        new Character(new CharacterMeta(dino_layout.run, 4, DINO_FLOOR_INITIAL_POSITION.clone(), new Velocity(0, 0)))
+        new Character(new CharacterMeta(aa_layout.run, 4, DINO_FLOOR_INITIAL_POSITION.clone(), new Velocity(0, 0)))
     ];
 
     document.ontouchstart = () => {
@@ -149,11 +163,6 @@ function event_loop() {
 
     if (game_score != 0 && game_score % 300 == 0) {
         game_score++;
-        if (current_theme.id == 1) {
-            current_theme = themes.dark;
-        } else {
-            current_theme = themes.classic;
-        }
     }
 
     canvas_ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -175,7 +184,7 @@ function event_loop() {
     // first time
     if (is_first_time) {
         is_first_time = false;
-        paint_layout(dino_layout.stand, harmfull_characters_pool[0].get_position().get());
+        paint_layout(aa_layout.stand, harmfull_characters_pool[0].get_position().get());
         game_over = Date.now();
 
         canvas_ctx.textBaseline = 'middle';
@@ -221,7 +230,7 @@ function event_loop() {
             // A special case for dino jump. It's leg should be in standing position while jump
             // Yes, this can be done much better but I am lazy :-)
             if (!dino_ready_to_jump && index == 1 && i == 0) {
-                CHARACTER_LAYOUT = dino_layout.stand;
+                CHARACTER_LAYOUT = aa_layout.stand;
             }
             // ******
 
@@ -251,7 +260,7 @@ function event_loop() {
             canvas_ctx.fillStyle = current_theme.info_text;
             canvas_ctx.fillText("G     A     M     E             O     V     E     R", canvas.width / 2, (canvas.height / 2) - 50);
             paint_layout(retry_layout, new Position((canvas.height / 2) - retry_layout.length, (canvas.width / 2) - retry_layout[0].length).get());
-            paint_layout(dino_layout.dead, harmfull_characters_pool[0].get_position().get());
+            paint_layout(aa_layout.dead, harmfull_characters_pool[0].get_position().get());
             game_over = Date.now();
 
 
