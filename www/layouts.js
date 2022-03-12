@@ -55,6 +55,15 @@ const TINY_STAR = [
     [5, 5, 5],
     [0, 5, 0]
 ];
+const METEOR = [
+    [2, 0, 0, 2, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 2, 2, 2, 2, 6, 6, 6, 0, 0, 0, 0, 0, 0],
+    [0, 2, 2, 2, 2, 2, 6, 6, 6, 6, 6, 0, 0, 0],
+    [2, 2, 2, 2, 2, 2, 3, 6, 6, 6, 6, 6, 6, 6],
+    [0, 2, 2, 2, 2, 2, 6, 6, 6, 6, 6, 0, 0, 0],
+    [0, 2, 2, 2, 2, 6, 6, 6, 0, 0, 0, 0, 0, 0],
+    [2, 0, 0, 2, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0]
+];
 const AA_STAND = [
     [0, 1, 1, 1, 1, 1, 1, 0],
     [0, 1, 2, 2, 2, 2, 2, 1],
@@ -445,6 +454,7 @@ export const layouts = {
         tiny: TINY_STAR
     },
     moon_layout: THA_MOON,
+    meteor_layout: METEOR,
     retry_layout: RETRY,
     themes: {
         classic: {
@@ -461,7 +471,7 @@ export const layouts = {
             road: "#acacac",
             score_text: "#909191",
             info_text: "#acacac",
-            layout: [false, "#202225", "#acacac", "#3e3f3f", "#acacac", "#3e3f3f"]
+            layout: [false, "#202225", "#acacac", "#3e3f3f", "#acacac", "#3e3f3f", "#ffffff"]
         }
     }
 };

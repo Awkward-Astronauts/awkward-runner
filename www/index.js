@@ -13,7 +13,8 @@ const {
     aa_layout,
     alien_layout,
     rock_layout,
-    moon_layout
+    moon_layout,
+    meteor_layout
 } = layouts;
 
 const canvas = document.getElementById("board");
@@ -23,12 +24,12 @@ const CELL_SIZE = 2;
 const ROWS = 600;
 let COLUMNS = 1400;
 const FLOOR_VELOCITY = new Velocity(0, -7);
-let ROCK_MIN_GAP = 30;
+let ROCK_MIN_GAP = 20;
 
 if (screen.width < COLUMNS) {
     COLUMNS = screen.width;
     FLOOR_VELOCITY.add(new Velocity(0, 2));
-    ROCK_MIN_GAP = 60;
+    ROCK_MIN_GAP = 50;
 }
 
 const ASTRO_INITIAL_TRUST = new Velocity(-11, 0);
@@ -74,15 +75,15 @@ let harmless_character_allocator = [
     new CharacterAllocator(
         new AllocatorCharacterArray()
             .add_character(new CharacterMeta([star_layout.point], 0, new Position(50, COLUMNS), new Velocity(0, -0.1)), 0.9)
-            .add_character(new CharacterMeta([star_layout.tiny], 0, new Position(75, COLUMNS), new Velocity(0, -0.1)), 0.8)
+            .add_character(new CharacterMeta([star_layout.tiny], 0, new Position(75, COLUMNS), new Velocity(0, -0.05)), 0.8)
             .add_character(new CharacterMeta([star_layout.point], 0, new Position(135, COLUMNS), new Velocity(0, -0.1)), 0.7)
-            .add_character(new CharacterMeta([star_layout.tiny], 0, new Position(180, COLUMNS), new Velocity(0, -0.1)), 0.6)
+            .add_character(new CharacterMeta([star_layout.tiny], 0, new Position(180, COLUMNS), new Velocity(0, -0.05)), 0.6)
             .add_character(new CharacterMeta([star_layout.point], 0, new Position(220, COLUMNS), new Velocity(0, -0.1)), 0.5)
-            .add_character(new CharacterMeta([star_layout.tiny], 0, new Position(245, COLUMNS), new Velocity(0, -0.1)), 0.4)
+            .add_character(new CharacterMeta([star_layout.tiny], 0, new Position(245, COLUMNS), new Velocity(0, -0.05)), 0.4)
             .add_character(new CharacterMeta([star_layout.point], 0, new Position(310, COLUMNS), new Velocity(0, -0.1)), 0.3)
-            .add_character(new CharacterMeta([star_layout.tiny], 0, new Position(375, COLUMNS), new Velocity(0, -0.1)), 0.2)
+            .add_character(new CharacterMeta([star_layout.tiny], 0, new Position(375, COLUMNS), new Velocity(0, -0.05)), 0.2)
             .add_character(new CharacterMeta([star_layout.point], 0, new Position(415, COLUMNS), new Velocity(0, -0.1)), 0.1)
-            .add_character(new CharacterMeta([star_layout.tiny], 0, new Position(490, COLUMNS), new Velocity(0, -0.1)), 0.0)
+            .add_character(new CharacterMeta([star_layout.tiny], 0, new Position(490, COLUMNS), new Velocity(0, -0.05)), 0.0)
         , 25, 5
     ),
     new CharacterAllocator(
@@ -117,6 +118,13 @@ let harmfull_character_allocator = [
             .add_character(new CharacterMeta([alien_layout], 0, new Position(490, COLUMNS), FLOOR_VELOCITY.clone().add(new Velocity(0, -1))), 0.95)
             .add_character(new CharacterMeta([alien_layout], 0, new Position(470, COLUMNS), FLOOR_VELOCITY.clone().add(new Velocity(0, -2))), 0.7)
         , 2000, 50
+    ),
+    new CharacterAllocator(
+        new AllocatorCharacterArray()
+            .add_character(new CharacterMeta([meteor_layout], 0, new Position(410, COLUMNS), FLOOR_VELOCITY.clone().add(new Velocity(0, -5))), 0.8)
+            .add_character(new CharacterMeta([meteor_layout], 0, new Position(275, COLUMNS), FLOOR_VELOCITY.clone().add(new Velocity(0, -6))), 0.5)
+            .add_character(new CharacterMeta([meteor_layout], 0, new Position(190, COLUMNS), FLOOR_VELOCITY.clone().add(new Velocity(0, -8))), 0.2)
+        , 1000, 500
     )
 ]
 
@@ -181,7 +189,7 @@ function event_loop() {
         game_score++;
     }
 
-    if (game_score != 0 && game_score % 300 == 0) {
+    if (game_score !== 0 && game_score % 300 === 0) {
         game_score++;
     }
 
