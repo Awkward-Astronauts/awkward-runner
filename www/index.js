@@ -22,7 +22,7 @@ const canvas_ctx = canvas.getContext('2d');
 
 const CELL_SIZE = 2;
 const ROWS = 600;
-let COLUMNS = 1400;
+let COLUMNS = 1200;
 const FLOOR_VELOCITY = new Velocity(0, -7);
 let ROCK_MIN_GAP = 20;
 
