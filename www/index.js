@@ -12,7 +12,6 @@ const {
     star_layout,
     aa_layout,
     alien_layout,
-    aa_star_layout,
     rock_layout,
     moon_layout
 } = layouts;
@@ -21,22 +20,22 @@ const canvas = document.getElementById("board");
 const canvas_ctx = canvas.getContext('2d');
 
 const CELL_SIZE = 2;
-const ROWS = 300;
-let COLUMNS = 1000;
+const ROWS = 600;
+let COLUMNS = 2000;
 const FLOOR_VELOCITY = new Velocity(0, -7);
-let ROCK_MIN_GAP = 20;
+let ROCK_MIN_GAP = 30;
 
 if (screen.width < COLUMNS) {
     COLUMNS = screen.width;
     FLOOR_VELOCITY.add(new Velocity(0, 2));
-    ROCK_MIN_GAP = 50;
+    ROCK_MIN_GAP = 60;
 }
 
-const DINO_INITIAL_TRUST = new Velocity(-11, 0);
+const ASTRO_INITIAL_TRUST = new Velocity(-11, 0);
 const ENVIRONMENT_GRAVITY = new Velocity(-0.6, 0);
-const DINO_FLOOR_INITIAL_POSITION = new Position(200, 10);
-let dino_current_trust = new Velocity(0, 0);
-let dino_ready_to_jump = true;
+const ASTRO_FLOOR_INITIAL_POSITION = new Position(500, 10);
+let astro_current_trust = new Velocity(0, 0);
+let astro_ready_to_jump = true;
 let game_over = null;
 let is_first_time = true;
 let game_score = null;
@@ -52,23 +51,45 @@ let harmfull_characters_pool = null;
 let harmless_character_allocator = [
     new CharacterAllocator(
         new AllocatorCharacterArray()
-            .add_character(new CharacterMeta([stone_layout.large], 0, new Position(240, COLUMNS), FLOOR_VELOCITY), 0.9)
-            .add_character(new CharacterMeta([stone_layout.medium], 0, new Position(243, COLUMNS), FLOOR_VELOCITY), 0.75)
-            .add_character(new CharacterMeta([stone_layout.small], 0, new Position(241, COLUMNS), FLOOR_VELOCITY), 0.6)
+            .add_character(new CharacterMeta([moon_layout], 0, new Position(140, COLUMNS), new Velocity(0, -0.4)), 0.95)
+        , 3000, 100
+    ),
+    new CharacterAllocator(
+        new AllocatorCharacterArray()
+            .add_character(new CharacterMeta([stone_layout.large], 0, new Position(540, COLUMNS), FLOOR_VELOCITY), 0.9)
+            .add_character(new CharacterMeta([stone_layout.medium], 0, new Position(543, COLUMNS), FLOOR_VELOCITY), 0.75)
+            .add_character(new CharacterMeta([stone_layout.small], 0, new Position(541, COLUMNS), FLOOR_VELOCITY), 0.6)
         , 2, 0
     ),
     new CharacterAllocator(
         new AllocatorCharacterArray()
-            .add_character(new CharacterMeta([star_layout.small_s1], 0, new Position(90, COLUMNS), new Velocity(0, -0.3)), 0.9)
-            .add_character(new CharacterMeta([star_layout.small_s2], 0, new Position(125, COLUMNS), new Velocity(0, -0.3)), 0.85)
-            .add_character(new CharacterMeta([star_layout.small_s1], 0, new Position(140, COLUMNS), new Velocity(0, -0.3)), 0.8)
-        , 350, 250
+            .add_character(new CharacterMeta([star_layout.small_s2], 0, new Position(105, COLUMNS), new Velocity(0, -0.3)), 0.9)
+            .add_character(new CharacterMeta([star_layout.small_s1], 0, new Position(190, COLUMNS), new Velocity(0, -0.3)), 0.7)
+            .add_character(new CharacterMeta([star_layout.small_s2], 0, new Position(265, COLUMNS), new Velocity(0, -0.3)), 0.5)
+            .add_character(new CharacterMeta([star_layout.small_s1], 0, new Position(350, COLUMNS), new Velocity(0, -0.3)), 0.3)
+            .add_character(new CharacterMeta([star_layout.small_s2], 0, new Position(400, COLUMNS), new Velocity(0, -0.3)), 0.15)
+            .add_character(new CharacterMeta([star_layout.small_s1], 0, new Position(440, COLUMNS), new Velocity(0, -0.3)), 0.0)
+        , 350, 0
     ),
     new CharacterAllocator(
         new AllocatorCharacterArray()
-            .add_character(new CharacterMeta([pit_layout.large], 0, new Position(223, COLUMNS), FLOOR_VELOCITY), 0.97)
-            .add_character(new CharacterMeta([pit_layout.up], 0, new Position(227, COLUMNS), FLOOR_VELOCITY), 0.90)
-            .add_character(new CharacterMeta([pit_layout.down], 0, new Position(230, COLUMNS), FLOOR_VELOCITY), 0.85)
+            .add_character(new CharacterMeta([star_layout.point], 0, new Position(50, COLUMNS), new Velocity(0, -0.1)), 0.9)
+            .add_character(new CharacterMeta([star_layout.tiny], 0, new Position(75, COLUMNS), new Velocity(0, -0.1)), 0.8)
+            .add_character(new CharacterMeta([star_layout.point], 0, new Position(135, COLUMNS), new Velocity(0, -0.1)), 0.7)
+            .add_character(new CharacterMeta([star_layout.tiny], 0, new Position(180, COLUMNS), new Velocity(0, -0.1)), 0.6)
+            .add_character(new CharacterMeta([star_layout.point], 0, new Position(220, COLUMNS), new Velocity(0, -0.1)), 0.5)
+            .add_character(new CharacterMeta([star_layout.tiny], 0, new Position(245, COLUMNS), new Velocity(0, -0.1)), 0.4)
+            .add_character(new CharacterMeta([star_layout.point], 0, new Position(310, COLUMNS), new Velocity(0, -0.1)), 0.3)
+            .add_character(new CharacterMeta([star_layout.tiny], 0, new Position(375, COLUMNS), new Velocity(0, -0.1)), 0.2)
+            .add_character(new CharacterMeta([star_layout.point], 0, new Position(415, COLUMNS), new Velocity(0, -0.1)), 0.1)
+            .add_character(new CharacterMeta([star_layout.tiny], 0, new Position(490, COLUMNS), new Velocity(0, -0.1)), 0.0)
+        , 25, 5
+    ),
+    new CharacterAllocator(
+        new AllocatorCharacterArray()
+            .add_character(new CharacterMeta([pit_layout.large], 0, new Position(523, COLUMNS), FLOOR_VELOCITY), 0.97)
+            .add_character(new CharacterMeta([pit_layout.up], 0, new Position(527, COLUMNS), FLOOR_VELOCITY), 0.90)
+            .add_character(new CharacterMeta([pit_layout.down], 0, new Position(530, COLUMNS), FLOOR_VELOCITY), 0.85)
         , 100, 50
     )
 ];
@@ -87,15 +108,15 @@ let harmfull_character_allocator = [
     // ),
     new CharacterAllocator(
         new AllocatorCharacterArray()
-            .add_character(new CharacterMeta([rock_layout.rock_short], 0, new Position(211, COLUMNS), FLOOR_VELOCITY), 0.8)
-            .add_character(new CharacterMeta([rock_layout.rock_tall], 0, new Position(195, COLUMNS), FLOOR_VELOCITY), 0.7)
+            .add_character(new CharacterMeta([rock_layout.rock_short], 0, new Position(511, COLUMNS), FLOOR_VELOCITY), 0.5)
+            .add_character(new CharacterMeta([rock_layout.rock_tall], 0, new Position(495, COLUMNS), FLOOR_VELOCITY), 0.0)
         , ROCK_MIN_GAP, 100
     ),
     new CharacterAllocator(
         new AllocatorCharacterArray()
-            .add_character(new CharacterMeta([alien_layout], 0, new Position(170, COLUMNS), FLOOR_VELOCITY.clone().add(new Velocity(0, -2))), 0.98)
-            .add_character(new CharacterMeta([alien_layout], 0, new Position(190, COLUMNS), FLOOR_VELOCITY.clone().add(new Velocity(0, -1))), 0.9)
-        , 500, 50
+            .add_character(new CharacterMeta([alien_layout], 0, new Position(490, COLUMNS), FLOOR_VELOCITY.clone().add(new Velocity(0, -1))), 0.95)
+            .add_character(new CharacterMeta([alien_layout], 0, new Position(470, COLUMNS), FLOOR_VELOCITY.clone().add(new Velocity(0, -2))), 0.7)
+        , 2000, 50
     )
 ]
 
@@ -104,13 +125,13 @@ function initialize() {
     cumulative_velocity = new Velocity(0, 0);
     game_over = false;
     game_score = 0;
-    game_hi_score = localStorage.getItem("project.github.chrome_dino.high_score") || 0;
+    game_hi_score = localStorage.getItem("project.awkward_astronauts.high_score") || 0;
     canvas.height = ROWS;
     canvas.width = COLUMNS;
 
     harmless_characters_pool = [];
     harmfull_characters_pool = [
-        new Character(new CharacterMeta(aa_layout.run, 4, DINO_FLOOR_INITIAL_POSITION.clone(), new Velocity(0, 0)))
+        new Character(new CharacterMeta(aa_layout.run, 4, ASTRO_FLOOR_INITIAL_POSITION.clone(), new Velocity(0, 0)))
     ];
 
     document.ontouchstart = () => {
@@ -119,9 +140,9 @@ function initialize() {
             return;
         }
 
-        if (dino_ready_to_jump) {
-            dino_ready_to_jump = false;
-            dino_current_trust = DINO_INITIAL_TRUST.clone();
+        if (astro_ready_to_jump) {
+            astro_ready_to_jump = false;
+            astro_current_trust = ASTRO_INITIAL_TRUST.clone();
         }
     };
 
@@ -132,8 +153,7 @@ function initialize() {
     };
 
     document.body.onkeydown = event => {
-        // keyCode is depricated
-        if (event.keyCode === 32 || event.key === ' ') {
+        if (event.key === ' ') {
             document.ontouchstart();
         }
     };
@@ -173,7 +193,7 @@ function event_loop() {
     // Road
     for (let i = 0; i < canvas.width; i++) {
         canvas_ctx.fillStyle = current_theme.road;
-        canvas_ctx.fillRect(0, 232, canvas.width, CELL_SIZE * 0.2);
+        canvas_ctx.fillRect(0, 532, canvas.width, CELL_SIZE * 0.2);
     }
 
     // score card update
@@ -227,9 +247,9 @@ function event_loop() {
             characters_pool[i].tick();
             let CHARACTER_LAYOUT = characters_pool[i].get_layout();
 
-            // A special case for dino jump. It's leg should be in standing position while jump
+            // A special case for astro jump. It's leg should be in standing position while jump
             // Yes, this can be done much better but I am lazy :-)
-            if (!dino_ready_to_jump && index == 1 && i == 0) {
+            if (!astro_ready_to_jump && index == 1 && i == 0) {
                 CHARACTER_LAYOUT = aa_layout.stand;
             }
             // ******
@@ -247,13 +267,13 @@ function event_loop() {
 
 
     // harmfull characters collision detection
-    let dino_character = harmfull_characters_pool[0];
-    let dino_current_position = dino_character.get_position();
-    let dino_current_layout = dino_character.get_layout();
+    let astro_character = harmfull_characters_pool[0];
+    let astro_current_position = astro_character.get_position();
+    let astro_current_layout = astro_character.get_layout();
     for (let i = harmfull_characters_pool.length - 1; i > 0; i--) {
         const HARMFULL_CHARACTER_POSITION = harmfull_characters_pool[i].get_position();
         const HARMFULL_CHARACTER_LAYOUT = harmfull_characters_pool[i].get_layout();
-        if (isCollided(dino_current_position.get()[0], dino_current_position.get()[1], dino_current_layout.length, dino_current_layout[0].length, HARMFULL_CHARACTER_POSITION.get()[0], HARMFULL_CHARACTER_POSITION.get()[1], HARMFULL_CHARACTER_LAYOUT.length, HARMFULL_CHARACTER_LAYOUT[0].length)) {
+        if (isCollided(astro_current_position.get()[0], astro_current_position.get()[1], astro_current_layout.length, astro_current_layout[0].length, HARMFULL_CHARACTER_POSITION.get()[0], HARMFULL_CHARACTER_POSITION.get()[1], HARMFULL_CHARACTER_LAYOUT.length, HARMFULL_CHARACTER_LAYOUT[0].length)) {
             canvas_ctx.textBaseline = 'middle';
             canvas_ctx.textAlign = 'center';
             canvas_ctx.font = "25px Arcade";
@@ -264,23 +284,23 @@ function event_loop() {
             game_over = Date.now();
 
 
-            if (localStorage.getItem("project.github.chrome_dino.high_score") < game_score) {
-                localStorage.setItem("project.github.chrome_dino.high_score", game_score);
+            if (localStorage.getItem("project.awkward_astronauts.high_score") < game_score) {
+                localStorage.setItem("project.awkward_astronauts.high_score", game_score);
             }
 
             return;
         }
     }
 
-    // dino jump case
-    dino_character.set_position(applyVelocityToPosition(dino_character.get_position(), dino_current_trust));
+    // astro jump case
+    astro_character.set_position(applyVelocityToPosition(astro_character.get_position(), astro_current_trust));
 
-    if (dino_character.get_position().get()[0] > DINO_FLOOR_INITIAL_POSITION.get()[0]) {
-        dino_character.set_position(DINO_FLOOR_INITIAL_POSITION.clone());
-        dino_ready_to_jump = true;
+    if (astro_character.get_position().get()[0] > ASTRO_FLOOR_INITIAL_POSITION.get()[0]) {
+        astro_character.set_position(ASTRO_FLOOR_INITIAL_POSITION.clone());
+        astro_ready_to_jump = true;
     }
 
-    dino_current_trust.sub(ENVIRONMENT_GRAVITY);
+    astro_current_trust.sub(ENVIRONMENT_GRAVITY);
 
     requestAnimationFrame(event_loop);
 }
