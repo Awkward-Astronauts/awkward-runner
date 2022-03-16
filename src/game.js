@@ -302,6 +302,7 @@ function checkForHiScore() {
   let hiScoreIndex = 0;
   for(let score in hiScoreValues) {
     if(game_score > hiScoreValues[score]) {
+      console.log('hiScoreIndex', hiScoreIndex);
       return hiScoreIndex;
     }
     hiScoreIndex++;

@@ -2,7 +2,7 @@
   "name": "awkward-runner",
   "type": "module",
   "scripts": {
-    "start": "webpack-dev-server",
+    "start": "NODE_ENV=development webpack-dev-server",
     "build": "webpack"
   },
   "devDependencies": {
