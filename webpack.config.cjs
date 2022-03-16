@@ -4,8 +4,8 @@ const Dotenv = require('dotenv-webpack');
 
 module.exports = {
   entry: {
-    "index": "./index.js",
-    "firebase": "./src/firebase.js"
+    'index': './index.js',
+    'firebase': './src/firebase.js'
   },
   plugins: [
     new HtmlWebpackPlugin({
@@ -34,5 +34,8 @@ module.exports = {
     path: path.resolve(__dirname, "dist"),
     filename: "[name].bundle.js"
   },
-  mode: "production"
+  mode: "production",
+  performance: {
+    hints: false,
+  }
 }
