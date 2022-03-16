@@ -3,7 +3,7 @@
   "type": "module",
   "scripts": {
     "start": "NODE_ENV=development webpack-dev-server",
-    "build": "webpack"
+    "build": "API_KEY=$API_KEY MESSAGING_SENDER_ID=$MESSAGING_SENDER_ID APP_ID=$APP_ID webpack"
   },
   "devDependencies": {
     "css-loader": "^6.7.1",
