@@ -12,7 +12,7 @@ module.exports = {
       title: 'Awkward Astronaut Runner',
       template: './index.html'
     }),
-    process.env.NODE_ENV === 'development' ? new Dotenv() : () => {}
+    new Dotenv()
   ],
   module: {
     rules: [
