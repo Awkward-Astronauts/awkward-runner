@@ -2,13 +2,13 @@ import { initializeApp } from "firebase/app";
 import { getDatabase, ref, onValue } from 'firebase/database';
 
 const firebaseConfig = {
-  apiKey: $API_KEY,
+  apiKey: process.env.API_KEY,
   authDomain: 'awkward-astronaut-api.firebaseapp.com',
   databaseURL: 'https://awkward-astronaut-api-default-rtdb.firebaseio.com/',
   projectId: 'awkward-astronaut-api',
   storageBucket: 'awkward-astronaut-api.appspot.com',
-  messagingSenderId: $MESSAGING_SENDER_ID,
-  appId: $APP_ID
+  messagingSenderId: process.env.MESSAGING_SENDER_ID,
+  appId: process.env.APP_ID
 };
 
 const hiScoreDiv = document.getElementById('hi-score');
