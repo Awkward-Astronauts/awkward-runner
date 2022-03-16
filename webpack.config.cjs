@@ -2,6 +2,13 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const Dotenv = require('dotenv-webpack');
 
+function getDotEnv() {
+  if (process.env.NODE_ENV === 'development') {
+    return new Dotenv();
+  }
+  return null;
+}
+
 module.exports = {
   entry: {
     'index': './index.js',
@@ -12,7 +19,7 @@ module.exports = {
       title: 'Awkward Astronaut Runner',
       template: './index.html'
     }),
-    new Dotenv(),
+    getDotEnv(),
   ],
   module: {
     rules: [
