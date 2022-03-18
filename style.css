@@ -19,10 +19,63 @@ body {
 
 #hi-score {
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     font-family: '04B30', 'sans-serif';
     font-size: 1.5rem;
+    color: #909191;
+}
+
+.input-initials {
+    padding-top: 1rem;
+}
+
+#initials {
+    border: none;
+    font-family: '04B30', 'sans-serif';
+    font-size: 4rem;
+    background: #202225;
+    width: 25rem;
+    color: #909191;
+    text-align: center;
+}
+
+#initials:focus {
+    outline: 0;
+}
+
+.cursor {
+    position: relative;
+}
+.cursor span {
+    position: absolute;
+    font-family: '04B30', 'sans-serif';
+    font-size: 4rem;
+    height: 80%;
+    left: 5px;
+    top: 10%;
+    animation-name: blink;
+    animation-duration: 800ms;
+    animation-iteration-count: infinite;
+    opacity: 1;
+}
+
+.cursor input:focus + i {
+    display: none;
+}
+
+@keyframes blink {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+
+#error {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: '04B30', 'sans-serif';
+    font-size: 1rem;
     color: #909191;
 }
 
@@ -50,3 +103,5 @@ body {
 .hiScoreHeader {
     padding-bottom: 1rem;
 }
+
+

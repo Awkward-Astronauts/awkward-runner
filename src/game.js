@@ -1,7 +1,9 @@
 import { AllocatorCharacterArray, Character, CharacterAllocator, CharacterMeta } from "./character.js";
 import { layouts } from "./layouts.js";
 import { applyVelocityToPosition, isCollided, Position, Velocity } from "./physics.js";
-import { hiScoreValues } from "./firebase.js";
+import { hiScoreRef, hiScoreValues} from "./firebase.js";
+import {getInitialsInput} from "./htmlLayouts.js";
+import { set } from 'firebase/database';
 
 const {
     stone_layout,
@@ -129,7 +131,7 @@ function initialize() {
     new Character(new CharacterMeta(aa_layout.run, 4, ASTRO_FLOOR_INITIAL_POSITION.clone(), new Velocity(0, 0)))
   ];
 
-  document.ontouchstart = () => {
+  canvas.ontouchstart = () => {
     if (gameOver && (Date.now() - timeSinceGameOver) > 1000) {
       loadGame();
       return;
@@ -141,15 +143,10 @@ function initialize() {
     }
   };
 
-  document.body.onclick = () => {
-    if (gameOver) {
-      document.ontouchstart();
-    }
-  };
-
   document.body.onkeydown = event => {
     if (event.key === ' ') {
-      document.ontouchstart();
+      event.preventDefault();
+      canvas.ontouchstart();
     }
   };
 }
@@ -271,7 +268,11 @@ function event_loop() {
         const HARMFULL_CHARACTER_POSITION = harmfull_characters_pool[i].get_position();
         const HARMFULL_CHARACTER_LAYOUT = harmfull_characters_pool[i].get_layout();
         if (isCollided(astro_current_position.get()[0], astro_current_position.get()[1], astro_current_layout.length, astro_current_layout[0].length, HARMFULL_CHARACTER_POSITION.get()[0], HARMFULL_CHARACTER_POSITION.get()[1], HARMFULL_CHARACTER_LAYOUT.length, HARMFULL_CHARACTER_LAYOUT[0].length)) {
-          checkForHiScore();
+          const hiScorePosition = checkForHiScore();
+          console.log('hiScorePosition', hiScorePosition);
+          if(hiScorePosition) {
+            showInitialsInput(hiScorePosition);
+          }
             canvas_ctx.textBaseline = 'middle';
             canvas_ctx.textAlign = 'center';
             canvas_ctx.font = '2rem "04B30"';
@@ -299,15 +300,48 @@ function event_loop() {
 }
 
 function checkForHiScore() {
-  let hiScoreIndex = 0;
-  for(let score in hiScoreValues) {
-    if(game_score > hiScoreValues[score]) {
-      console.log('hiScoreIndex', hiScoreIndex);
-      return hiScoreIndex;
+  for(let i = 0; i < hiScoreValues.length; i++) {
+    if(game_score > Object.values(hiScoreValues[i])[0]) {
+      return i;
     }
-    hiScoreIndex++;
   }
-  return -1;
+}
+
+function showInitialsInput(scoreIndex) {
+
+  const hiScoreDiv = document.getElementById('hi-score');
+  hiScoreDiv.innerHTML = getInitialsInput(game_score);
+
+  const submitButton = document.getElementById('initials-submit');
+  submitButton.addEventListener('click', () => {
+    const initials = document.getElementById('initials').value;
+    const errorField = document.getElementById('error');
+    if(initials.length >= 1 && initials.length <= 3) {
+      setNewHiScore(initials, scoreIndex);
+    } else {
+      errorField.innerHTML = 'You must enter between 1 and 3 characters.';
+    }
+  })
+}
+
+function setNewHiScore(newInitials, scoreIndex) {
+  // Update Hi Score object with new hi score
+  const newHiScoreTable = [...hiScoreValues];
+  const newEntry = {};
+  newEntry[newInitials] = game_score;
+  newHiScoreTable.splice(scoreIndex, 0, newEntry);
+  newHiScoreTable.pop();
+
+  console.log('newHiScoreTable', newHiScoreTable);
+  // Set new object in db
+  set(hiScoreRef, newHiScoreTable).then(() => {
+    const hiScoreDiv = document.getElementById('hi-score');
+    hiScoreDiv.innerHTML = 'Success! Press the spacebar to play again.';
+  }).catch(error => {
+    const errorDiv = document.getElementById('error');
+    errorDiv.innerHTML = 'Well, this is awkward... There was an issue saving your score.';
+    console.error('Firebase set error: ', error);
+  });
 }
 
 export function loadGame() {
