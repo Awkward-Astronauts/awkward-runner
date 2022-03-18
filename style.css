@@ -45,6 +45,11 @@ body {
     outline: 0;
 }
 
+.press-enter {
+    padding-top: 1rem;
+    font-size: 1rem;
+}
+
 .cursor {
     position: relative;
 }

@@ -272,7 +272,6 @@ function event_loop() {
         const HARMFULL_CHARACTER_LAYOUT = harmfull_characters_pool[i].get_layout();
         if (isCollided(astro_current_position.get()[0], astro_current_position.get()[1], astro_current_layout.length, astro_current_layout[0].length, HARMFULL_CHARACTER_POSITION.get()[0], HARMFULL_CHARACTER_POSITION.get()[1], HARMFULL_CHARACTER_LAYOUT.length, HARMFULL_CHARACTER_LAYOUT[0].length)) {
           const hiScorePosition = checkForHiScore();
-          console.log('hiScorePosition', hiScorePosition);
           if(hiScorePosition) {
             showInitialsInput(hiScorePosition);
           }
@@ -316,14 +315,17 @@ function showInitialsInput(scoreIndex) {
   const hiScoreDiv = document.getElementById('hi-score');
   hiScoreDiv.innerHTML = getInitialsInput(game_score);
 
-  const submitButton = document.getElementById('initials-submit');
-  submitButton.addEventListener('click', () => {
-    const initials = document.getElementById('initials').value;
-    const errorField = document.getElementById('error');
-    if(initials.length >= 1 && initials.length <= 3) {
-      setNewHiScore(initials, scoreIndex);
-    } else {
-      errorField.innerHTML = 'You must enter between 1 and 3 characters.';
+  const initialsInput = document.getElementById('initials');
+  initialsInput.addEventListener('keyup', (event) => {
+    if(event.code === 'Enter') {
+      const initials = document.getElementById('initials').value;
+      const errorField = document.getElementById('error');
+      if (initials.length >= 1 && initials.length <= 3) {
+        errorField.innerHTML = '';
+        setNewHiScore(initials, scoreIndex);
+      } else {
+        errorField.innerHTML = 'You must enter between 1 and 3 characters.';
+      }
     }
   })
 }
@@ -339,7 +341,7 @@ function setNewHiScore(newInitials, scoreIndex) {
   // Set new object in db
   set(hiScoreRef, newHiScoreTable).then(() => {
     const hiScoreDiv = document.getElementById('hi-score');
-    hiScoreDiv.innerHTML = 'Success! Press the spacebar to play again.';
+    hiScoreDiv.innerHTML = getHiScoreLayout(hiScoreValues);
   }).catch(error => {
     const errorDiv = document.getElementById('error');
     errorDiv.innerHTML = 'Well, this is awkward... There was an issue saving your score.';
