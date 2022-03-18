@@ -1,0 +1,112 @@
+@font-face {
+    font-family: '04B30';
+    src: url('./assets/04b_30.woff2');
+}
+
+body {
+    background-color: #202225;
+}
+
+#container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#board {
+    padding-top: 1rem;
+}
+
+#hi-score {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: '04B30', 'sans-serif';
+    font-size: 1.5rem;
+    color: #909191;
+}
+
+.input-initials {
+    padding-top: 1rem;
+}
+
+#initials {
+    border: none;
+    font-family: '04B30', 'sans-serif';
+    font-size: 4rem;
+    background: #202225;
+    width: 25rem;
+    color: #909191;
+    text-align: center;
+}
+
+#initials:focus {
+    outline: 0;
+}
+
+.press-enter {
+    padding-top: 1rem;
+    font-size: 1rem;
+}
+
+.cursor {
+    position: relative;
+}
+.cursor span {
+    position: absolute;
+    font-family: '04B30', 'sans-serif';
+    font-size: 4rem;
+    height: 80%;
+    left: 5px;
+    top: 10%;
+    animation-name: blink;
+    animation-duration: 800ms;
+    animation-iteration-count: infinite;
+    opacity: 1;
+}
+
+.cursor input:focus + i {
+    display: none;
+}
+
+@keyframes blink {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+
+#error {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: '04B30', 'sans-serif';
+    font-size: 1rem;
+    color: #909191;
+}
+
+.awkwardAstronauts {
+    font-family: '04B30', 'sans-serif';
+    font-size: 3rem;
+    color: #909191;
+    padding-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.placeNumber {
+    text-align: right;
+    padding-right: 0.25rem;
+}
+
+.initials, .dash, .score {
+    text-align: center;
+    padding-right: 0.25rem;
+    padding-left: 0.25rem;
+}
+
+.hiScoreHeader {
+    padding-bottom: 1rem;
+}
+
+
