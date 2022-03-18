@@ -2,7 +2,7 @@ import { AllocatorCharacterArray, Character, CharacterAllocator, CharacterMeta }
 import { layouts } from "./layouts.js";
 import { applyVelocityToPosition, isCollided, Position, Velocity } from "./physics.js";
 import { hiScoreRef, hiScoreValues} from "./firebase.js";
-import {getInitialsInput} from "./htmlLayouts.js";
+import {getHiScoreLayout, getInitialsInput} from "./htmlLayouts.js";
 import { set } from 'firebase/database';
 
 const {
@@ -131,9 +131,12 @@ function initialize() {
     new Character(new CharacterMeta(aa_layout.run, 4, ASTRO_FLOOR_INITIAL_POSITION.clone(), new Velocity(0, 0)))
   ];
 
+  const hiScoreTable = document.getElementById('hi-score');
+
   canvas.ontouchstart = () => {
     if (gameOver && (Date.now() - timeSinceGameOver) > 1000) {
       loadGame();
+      hiScoreTable.innerHTML = getHiScoreLayout(hiScoreValues);
       return;
     }
 
@@ -277,7 +280,8 @@ function event_loop() {
             canvas_ctx.textAlign = 'center';
             canvas_ctx.font = '2rem "04B30"';
             canvas_ctx.fillStyle = current_theme.info_text;
-            canvas_ctx.fillText("GAME OVER", canvas.width / 2, (canvas.height / 2) - 50);
+            canvas_ctx.fillText("GAME OVER", canvas.width / 2, (canvas.height / 2) - 100);
+            canvas_ctx.fillText("PRESS SPACE TO TRY AGAIN!", canvas.width / 2, (canvas.height / 2) - 60)
             paint_layout(retry_layout, new Position((canvas.height / 2) - retry_layout.length, (canvas.width / 2) - retry_layout[0].length).get());
             paint_layout(aa_layout.dead, harmfull_characters_pool[0].get_position().get());
             timeSinceGameOver = Date.now();
@@ -332,7 +336,6 @@ function setNewHiScore(newInitials, scoreIndex) {
   newHiScoreTable.splice(scoreIndex, 0, newEntry);
   newHiScoreTable.pop();
 
-  console.log('newHiScoreTable', newHiScoreTable);
   // Set new object in db
   set(hiScoreRef, newHiScoreTable).then(() => {
     const hiScoreDiv = document.getElementById('hi-score');

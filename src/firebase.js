@@ -21,7 +21,6 @@ const hiScoreDiv = document.getElementById('hi-score');
 onValue(hiScoreRef, (snapshot) => {
   if(snapshot.exists()) {
     hiScoreValues = snapshot.val();
-    console.log('hiScoreValues', hiScoreValues);
     hiScoreDiv.innerHTML = getHiScoreLayout(hiScoreValues);
   } else {
     hiScoreDiv.innerHTML = "Well this is awkward... We can't seem to find the Hi Scores!";
