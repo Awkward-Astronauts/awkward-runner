@@ -272,7 +272,7 @@ function event_loop() {
         const HARMFULL_CHARACTER_LAYOUT = harmfull_characters_pool[i].get_layout();
         if (isCollided(astro_current_position.get()[0], astro_current_position.get()[1], astro_current_layout.length, astro_current_layout[0].length, HARMFULL_CHARACTER_POSITION.get()[0], HARMFULL_CHARACTER_POSITION.get()[1], HARMFULL_CHARACTER_LAYOUT.length, HARMFULL_CHARACTER_LAYOUT[0].length)) {
           const hiScorePosition = checkForHiScore();
-          if(hiScorePosition) {
+          if(hiScorePosition !== undefined) {
             showInitialsInput(hiScorePosition);
           }
             canvas_ctx.textBaseline = 'middle';
