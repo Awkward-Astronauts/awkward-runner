@@ -21,21 +21,20 @@ const {
 const canvas = document.getElementById("board");
 const canvas_ctx = canvas.getContext('2d');
 
-const CELL_SIZE = 2;
-const ROWS = 600;
-let COLUMNS = 1200;
-const FLOOR_VELOCITY = new Velocity(0, -7);
-let ROCK_MIN_GAP = 20;
+const TABLET_MAX_SCREEN_WIDTH = 1024;
+const MOBILE_MAX_SCREEN_WIDTH = 767;
 
-if (screen.width < COLUMNS) {
-    COLUMNS = screen.width;
-    FLOOR_VELOCITY.add(new Velocity(0, 2));
-    ROCK_MIN_GAP = 50;
-}
+const CELL_SIZE = 2;
+const ROWS = window.innerHeight < 600 ? window.innerHeight : 600;
+const COLUMNS = window.innerWidth <= TABLET_MAX_SCREEN_WIDTH ? window.innerWidth : window.innerWidth - 200;
+const FLOOR_VELOCITY = COLUMNS > MOBILE_MAX_SCREEN_WIDTH ?
+  new Velocity(0, -7) :
+  new Velocity(0, -5);
+let ROCK_MIN_GAP = COLUMNS > MOBILE_MAX_SCREEN_WIDTH ? 20 : 50;
 
 const ASTRO_INITIAL_THRUST = new Velocity(-11, 0);
 const ENVIRONMENT_GRAVITY = new Velocity(-0.6, 0);
-const ASTRO_FLOOR_INITIAL_POSITION = new Position(500, 10);
+const ASTRO_FLOOR_INITIAL_POSITION = new Position(ROWS - 100, 10);
 let astro_current_thrust = new Velocity(0, 0);
 let astro_ready_to_jump = true;
 let gameOver = null;
@@ -53,45 +52,45 @@ let harmfull_characters_pool = null;
 let harmless_character_allocator = [
     new CharacterAllocator(
         new AllocatorCharacterArray()
-            .add_character(new CharacterMeta([moon_layout], 0, new Position(140, COLUMNS), new Velocity(0, -0.4)), 0.95)
+            .add_character(new CharacterMeta([moon_layout], 0, new Position(ROWS - 460, COLUMNS), new Velocity(0, -0.4)), 0.95)
         , 3000, 100
     ),
     new CharacterAllocator(
         new AllocatorCharacterArray()
-            .add_character(new CharacterMeta([stone_layout.large], 0, new Position(540, COLUMNS), FLOOR_VELOCITY), 0.9)
-            .add_character(new CharacterMeta([stone_layout.medium], 0, new Position(543, COLUMNS), FLOOR_VELOCITY), 0.75)
-            .add_character(new CharacterMeta([stone_layout.small], 0, new Position(541, COLUMNS), FLOOR_VELOCITY), 0.6)
+            .add_character(new CharacterMeta([stone_layout.large], 0, new Position(ROWS - 60, COLUMNS), FLOOR_VELOCITY), 0.9)
+            .add_character(new CharacterMeta([stone_layout.medium], 0, new Position(ROWS - 57, COLUMNS), FLOOR_VELOCITY), 0.75)
+            .add_character(new CharacterMeta([stone_layout.small], 0, new Position(ROWS - 59, COLUMNS), FLOOR_VELOCITY), 0.6)
         , 2, 0
     ),
     new CharacterAllocator(
         new AllocatorCharacterArray()
-            .add_character(new CharacterMeta([star_layout.small_s2], 0, new Position(105, COLUMNS), new Velocity(0, -0.3)), 0.9)
-            .add_character(new CharacterMeta([star_layout.small_s1], 0, new Position(190, COLUMNS), new Velocity(0, -0.3)), 0.7)
-            .add_character(new CharacterMeta([star_layout.small_s2], 0, new Position(265, COLUMNS), new Velocity(0, -0.3)), 0.5)
-            .add_character(new CharacterMeta([star_layout.small_s1], 0, new Position(350, COLUMNS), new Velocity(0, -0.3)), 0.3)
-            .add_character(new CharacterMeta([star_layout.small_s2], 0, new Position(400, COLUMNS), new Velocity(0, -0.3)), 0.15)
-            .add_character(new CharacterMeta([star_layout.small_s1], 0, new Position(440, COLUMNS), new Velocity(0, -0.3)), 0.0)
+            .add_character(new CharacterMeta([star_layout.small_s2], 0, new Position(ROWS - 495, COLUMNS), new Velocity(0, -0.3)), 0.9)
+            .add_character(new CharacterMeta([star_layout.small_s1], 0, new Position(ROWS - 410, COLUMNS), new Velocity(0, -0.3)), 0.7)
+            .add_character(new CharacterMeta([star_layout.small_s2], 0, new Position(ROWS - 335, COLUMNS), new Velocity(0, -0.3)), 0.5)
+            .add_character(new CharacterMeta([star_layout.small_s1], 0, new Position(ROWS - 250, COLUMNS), new Velocity(0, -0.3)), 0.3)
+            .add_character(new CharacterMeta([star_layout.small_s2], 0, new Position(ROWS - 200, COLUMNS), new Velocity(0, -0.3)), 0.15)
+            .add_character(new CharacterMeta([star_layout.small_s1], 0, new Position(ROWS - 160, COLUMNS), new Velocity(0, -0.3)), 0.0)
         , 350, 0
     ),
     new CharacterAllocator(
         new AllocatorCharacterArray()
-            .add_character(new CharacterMeta([star_layout.point], 0, new Position(50, COLUMNS), new Velocity(0, -0.1)), 0.9)
-            .add_character(new CharacterMeta([star_layout.tiny], 0, new Position(75, COLUMNS), new Velocity(0, -0.05)), 0.8)
-            .add_character(new CharacterMeta([star_layout.point], 0, new Position(135, COLUMNS), new Velocity(0, -0.1)), 0.7)
-            .add_character(new CharacterMeta([star_layout.tiny], 0, new Position(180, COLUMNS), new Velocity(0, -0.05)), 0.6)
-            .add_character(new CharacterMeta([star_layout.point], 0, new Position(220, COLUMNS), new Velocity(0, -0.1)), 0.5)
-            .add_character(new CharacterMeta([star_layout.tiny], 0, new Position(245, COLUMNS), new Velocity(0, -0.05)), 0.4)
-            .add_character(new CharacterMeta([star_layout.point], 0, new Position(310, COLUMNS), new Velocity(0, -0.1)), 0.3)
-            .add_character(new CharacterMeta([star_layout.tiny], 0, new Position(375, COLUMNS), new Velocity(0, -0.05)), 0.2)
-            .add_character(new CharacterMeta([star_layout.point], 0, new Position(415, COLUMNS), new Velocity(0, -0.1)), 0.1)
-            .add_character(new CharacterMeta([star_layout.tiny], 0, new Position(490, COLUMNS), new Velocity(0, -0.05)), 0.0)
+            .add_character(new CharacterMeta([star_layout.point], 0, new Position(ROWS - 550, COLUMNS), new Velocity(0, -0.1)), 0.9)
+            .add_character(new CharacterMeta([star_layout.tiny], 0, new Position(ROWS - 525, COLUMNS), new Velocity(0, -0.05)), 0.8)
+            .add_character(new CharacterMeta([star_layout.point], 0, new Position(ROWS - 465, COLUMNS), new Velocity(0, -0.1)), 0.7)
+            .add_character(new CharacterMeta([star_layout.tiny], 0, new Position(ROWS - 420, COLUMNS), new Velocity(0, -0.05)), 0.6)
+            .add_character(new CharacterMeta([star_layout.point], 0, new Position(ROWS - 380, COLUMNS), new Velocity(0, -0.1)), 0.5)
+            .add_character(new CharacterMeta([star_layout.tiny], 0, new Position(ROWS - 355, COLUMNS), new Velocity(0, -0.05)), 0.4)
+            .add_character(new CharacterMeta([star_layout.point], 0, new Position(ROWS - 290, COLUMNS), new Velocity(0, -0.1)), 0.3)
+            .add_character(new CharacterMeta([star_layout.tiny], 0, new Position(ROWS - 225, COLUMNS), new Velocity(0, -0.05)), 0.2)
+            .add_character(new CharacterMeta([star_layout.point], 0, new Position(ROWS - 185, COLUMNS), new Velocity(0, -0.1)), 0.1)
+            .add_character(new CharacterMeta([star_layout.tiny], 0, new Position(ROWS - 110, COLUMNS), new Velocity(0, -0.05)), 0.0)
         , 25, 5
     ),
     new CharacterAllocator(
         new AllocatorCharacterArray()
-            .add_character(new CharacterMeta([pit_layout.large], 0, new Position(523, COLUMNS), FLOOR_VELOCITY), 0.97)
-            .add_character(new CharacterMeta([pit_layout.up], 0, new Position(527, COLUMNS), FLOOR_VELOCITY), 0.90)
-            .add_character(new CharacterMeta([pit_layout.down], 0, new Position(530, COLUMNS), FLOOR_VELOCITY), 0.85)
+            .add_character(new CharacterMeta([pit_layout.large], 0, new Position(ROWS - 77, COLUMNS), FLOOR_VELOCITY), 0.97)
+            .add_character(new CharacterMeta([pit_layout.up], 0, new Position(ROWS - 73, COLUMNS), FLOOR_VELOCITY), 0.90)
+            .add_character(new CharacterMeta([pit_layout.down], 0, new Position(ROWS - 70, COLUMNS), FLOOR_VELOCITY), 0.85)
         , 100, 50
     )
 ];
@@ -99,21 +98,21 @@ let harmless_character_allocator = [
 let harmfull_character_allocator = [
     new CharacterAllocator(
         new AllocatorCharacterArray()
-            .add_character(new CharacterMeta([rock_layout.rock_short], 0, new Position(511, COLUMNS), FLOOR_VELOCITY), 0.5)
-            .add_character(new CharacterMeta([rock_layout.rock_tall], 0, new Position(495, COLUMNS), FLOOR_VELOCITY), 0.0)
+            .add_character(new CharacterMeta([rock_layout.rock_short], 0, new Position(ROWS - 89, COLUMNS), FLOOR_VELOCITY), 0.5)
+            .add_character(new CharacterMeta([rock_layout.rock_tall], 0, new Position(ROWS - 105, COLUMNS), FLOOR_VELOCITY), 0.0)
         , ROCK_MIN_GAP, 100
     ),
     new CharacterAllocator(
         new AllocatorCharacterArray()
-            .add_character(new CharacterMeta([alien_layout], 0, new Position(490, COLUMNS), FLOOR_VELOCITY.clone().add(new Velocity(0, -1))), 0.95)
-            .add_character(new CharacterMeta([alien_layout], 0, new Position(470, COLUMNS), FLOOR_VELOCITY.clone().add(new Velocity(0, -2))), 0.7)
+            .add_character(new CharacterMeta([alien_layout], 0, new Position(ROWS - 110, COLUMNS), FLOOR_VELOCITY.clone().add(new Velocity(0, -1))), 0.95)
+            .add_character(new CharacterMeta([alien_layout], 0, new Position(ROWS - 130, COLUMNS), FLOOR_VELOCITY.clone().add(new Velocity(0, -2))), 0.7)
         , 2000, 50
     ),
     new CharacterAllocator(
         new AllocatorCharacterArray()
-            .add_character(new CharacterMeta([meteor_layout], 0, new Position(410, COLUMNS), FLOOR_VELOCITY.clone().add(new Velocity(0, -5))), 0.8)
-            .add_character(new CharacterMeta([meteor_layout], 0, new Position(275, COLUMNS), FLOOR_VELOCITY.clone().add(new Velocity(0, -6))), 0.5)
-            .add_character(new CharacterMeta([meteor_layout], 0, new Position(190, COLUMNS), FLOOR_VELOCITY.clone().add(new Velocity(0, -8))), 0.2)
+            .add_character(new CharacterMeta([meteor_layout], 0, new Position(ROWS - 190, COLUMNS), FLOOR_VELOCITY.clone().add(new Velocity(0, -5))), 0.8)
+            .add_character(new CharacterMeta([meteor_layout], 0, new Position(ROWS - 325, COLUMNS), FLOOR_VELOCITY.clone().add(new Velocity(0, -6))), 0.5)
+            .add_character(new CharacterMeta([meteor_layout], 0, new Position(ROWS - 410, COLUMNS), FLOOR_VELOCITY.clone().add(new Velocity(0, -8))), 0.2)
         , 1000, 500
     )
 ]
@@ -188,7 +187,7 @@ function event_loop() {
     // Road
     for (let i = 0; i < canvas.width; i++) {
         canvas_ctx.fillStyle = current_theme.road;
-        canvas_ctx.fillRect(0, 532, canvas.width, CELL_SIZE * 0.2);
+        canvas_ctx.fillRect(0, ROWS - 68, canvas.width, CELL_SIZE * 0.2);
     }
 
     // score card update
@@ -206,9 +205,10 @@ function event_loop() {
 
         canvas_ctx.textBaseline = 'middle';
         canvas_ctx.textAlign = 'center';
-        canvas_ctx.font = '2rem "04B30"';
+        canvas_ctx.font = COLUMNS > MOBILE_MAX_SCREEN_WIDTH ? '2rem "04B30"' : '1rem "04B30"';
         canvas_ctx.fillStyle = current_theme.info_text;
-        canvas_ctx.fillText("PRESS SPACE TO START", canvas.width / 2, (canvas.height / 2) - 50);
+        const startText = COLUMNS > TABLET_MAX_SCREEN_WIDTH ? 'PRESS SPACE TO START' : 'TOUCH SCREEN TO START';
+        canvas_ctx.fillText(startText, canvas.width / 2, (canvas.height / 2) - 50);
         return;
     }
 
@@ -277,10 +277,11 @@ function event_loop() {
           }
             canvas_ctx.textBaseline = 'middle';
             canvas_ctx.textAlign = 'center';
-            canvas_ctx.font = '2rem "04B30"';
+            canvas_ctx.font = COLUMNS > MOBILE_MAX_SCREEN_WIDTH ? '2rem "04B30"' : '1rem "04B30"';
             canvas_ctx.fillStyle = current_theme.info_text;
             canvas_ctx.fillText("GAME OVER", canvas.width / 2, (canvas.height / 2) - 100);
-            canvas_ctx.fillText("PRESS SPACE TO TRY AGAIN!", canvas.width / 2, (canvas.height / 2) - 60)
+            const tryAgainText = COLUMNS > TABLET_MAX_SCREEN_WIDTH ? "PRESS SPACE TO TRY AGAIN!" : "TOUCH SCREEN TO TRY AGAIN!"
+            canvas_ctx.fillText(tryAgainText, canvas.width / 2, (canvas.height / 2) - 60)
             paint_layout(retry_layout, new Position((canvas.height / 2) - retry_layout.length, (canvas.width / 2) - retry_layout[0].length).get());
             paint_layout(aa_layout.dead, harmfull_characters_pool[0].get_position().get());
             timeSinceGameOver = Date.now();

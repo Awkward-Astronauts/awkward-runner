@@ -1,4 +1,4 @@
-import { applyVelocityToPosition, Velocity } from "./physics.js";
+import { applyVelocityToPosition } from "./physics.js";
 
 export class CharacterMeta {
     constructor(movements_array, movement_delay, position, velocity) {
