@@ -27,7 +27,7 @@ export function getInitialsInput(gameScore) {
     <span class="game-score">${gameScore}!!!</span>
     <span class="input-initials">Input up to 3 Initials</span>
     <div class="cursor">
-      <input type="text" id="initials" minlength="1" maxlength="3" pattern="[A-Za-z]{1,3}" autofocus required />
+      <input type="text" id="initials" minlength="1" maxlength="3" pattern="[A-Za-z]{1,3}" required />
     </div>
     <span class="press-enter">Press Enter to Submit</span>
     `;

@@ -9,12 +9,19 @@
 </head>
 
 <body>
+  <input type="text" id="test" />
+  <span id="print-test"></span>
   <div id="container">
     <canvas id="board"></canvas>
   </div>
   <span class="awkwardAstronauts">Awkward Astronauts</span>
   <div id="hi-score"></div>
   <div id="error"></div>
+<script>
+  document.getElementById('test').addEventListener('keyup', function(event) {
+    document.getElementById('print-test').innerHTML = event.key;
+  })
+</script>
 </body>
 
 </html>

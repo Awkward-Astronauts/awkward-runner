@@ -317,6 +317,7 @@ function showInitialsInput(scoreIndex) {
 
   const initialsInput = document.getElementById('initials');
   initialsInput.scrollIntoView();
+  initialsInput.focus();
   initialsInput.addEventListener('keyup', (event) => {
     if(event.code === 'Enter' || event.key === 'Enter') {
       const initials = document.getElementById('initials').value;

@@ -17,6 +17,10 @@ body {
     padding-top: 1rem;
 }
 
+#print-test {
+    color: #909191;
+}
+
 #hi-score {
     display: flex;
     flex-direction: column;
