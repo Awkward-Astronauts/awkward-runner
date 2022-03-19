@@ -317,7 +317,7 @@ function showInitialsInput(scoreIndex) {
 
   const initialsInput = document.getElementById('initials');
   initialsInput.addEventListener('keyup', (event) => {
-    if(event.code === 'Enter' || event.code === 'Return') {
+    if(event.code === 'Enter' || event.key === 'Enter') {
       const initials = document.getElementById('initials').value;
       const errorField = document.getElementById('error');
       if (initials.length >= 1 && initials.length <= 3) {
