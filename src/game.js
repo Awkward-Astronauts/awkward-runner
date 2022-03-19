@@ -316,7 +316,6 @@ function showInitialsInput(scoreIndex) {
   hiScoreDiv.innerHTML = getInitialsInput(game_score);
 
   const initialsInput = document.getElementById('initials');
-  initialsInput.scrollIntoView();
   initialsInput.focus();
   initialsInput.addEventListener('keyup', (event) => {
     if(event.code === 'Enter' || event.key === 'Enter') {
