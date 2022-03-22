@@ -4,6 +4,7 @@ import { applyVelocityToPosition, isCollided, Position, Velocity } from "./physi
 import { hiScoreRef, hiScoreValues} from "./firebase.js";
 import {getHiScoreLayout, getInitialsInput} from "./htmlLayouts.js";
 import { set } from 'firebase/database';
+import backgroundAudio from '../assets/audio/neon blue.mp3';
 
 const {
     stone_layout,
@@ -20,6 +21,7 @@ const {
 
 const canvas = document.getElementById("board");
 const canvas_ctx = canvas.getContext('2d');
+const backgroundMusic = new Audio(backgroundAudio);
 
 const TABLET_MAX_SCREEN_WIDTH = 1024;
 const MOBILE_MAX_SCREEN_WIDTH = 767;
@@ -117,6 +119,20 @@ let harmfull_character_allocator = [
     )
 ]
 
+function playMusic() {
+  backgroundMusic.loop = true;
+  backgroundMusic.volume = 0.25;
+  if(backgroundMusic.paused || is_first_time) {
+    backgroundMusic.play().catch(err => console.log('Error starting music: ', err));
+  }
+}
+
+function muteMusic() {
+  // standard hack to "stop" an audio track...
+  backgroundMusic.pause();
+  backgroundMusic.currentTime = 0;
+}
+
 function initialize() {
   current_theme = themes.dark;
   cumulative_velocity = new Velocity(0, 0);
@@ -136,6 +152,7 @@ function initialize() {
     if (gameOver && (Date.now() - timeSinceGameOver) > 1000) {
       loadGame();
       hiScoreTable.innerHTML = getHiScoreLayout(hiScoreValues);
+      playMusic();
       return;
     }
 
