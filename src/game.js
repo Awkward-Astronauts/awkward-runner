@@ -5,6 +5,8 @@ import { hiScoreRef, hiScoreValues} from "./firebase.js";
 import {getHiScoreLayout, getInitialsInput} from "./htmlLayouts.js";
 import { set } from 'firebase/database';
 import backgroundAudio from '../assets/audio/neon blue.mp3';
+import jumpAudio from '../assets/audio/jump.wav';
+import * as assets from './assets.js';
 
 const {
     stone_layout,
@@ -22,6 +24,8 @@ const {
 const canvas = document.getElementById("board");
 const canvas_ctx = canvas.getContext('2d');
 const backgroundMusic = new Audio(backgroundAudio);
+const jumpSoundEffect = new Audio(jumpAudio);
+jumpSoundEffect.volume = 0.25;
 
 const TABLET_MAX_SCREEN_WIDTH = 1024;
 const MOBILE_MAX_SCREEN_WIDTH = 767;
@@ -157,6 +161,7 @@ function initialize() {
     }
 
     if (astro_ready_to_jump) {
+      jumpSoundEffect.play();
       astro_ready_to_jump = false;
       astro_current_thrust = ASTRO_INITIAL_THRUST.clone();
     }
@@ -313,6 +318,8 @@ function event_loop() {
     if (astro_character.get_position().get()[0] > ASTRO_FLOOR_INITIAL_POSITION.get()[0]) {
         astro_character.set_position(ASTRO_FLOOR_INITIAL_POSITION.clone());
         astro_ready_to_jump = true;
+        jumpSoundEffect.pause();
+        jumpSoundEffect.currentTime = 0;
     }
 
     astro_current_thrust.sub(ENVIRONMENT_GRAVITY);

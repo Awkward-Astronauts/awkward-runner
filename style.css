@@ -7,10 +7,53 @@ body {
     background-color: #202225;
 }
 
+a, :link, :visited {
+    text-decoration: none;
+    color: #909191;
+}
+
 #container {
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
+}
+
+#links {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.discord-logo {
+    display: block;
+    font-family: '04B30', 'sans-serif';
+    font-size: 1rem;
+    color: #909191;
+    flex: 1;
+    text-align: center;
+}
+
+.discord-logo-image {
+    background-image: url('./assets/Discord-Logo-White.png');
+}
+
+.music-attribution {
+    font-family: '04B30', 'sans-serif';
+    font-size: 1rem;
+    color: #909191;
+    flex: 1;
+    text-align: center;
+}
+
+.nifty-link {
+    font-family: '04B30', 'sans-serif';
+    font-size: 1rem;
+    color: #909191;
+    flex: 1;
+    text-align: center;
 }
 
 #board {
