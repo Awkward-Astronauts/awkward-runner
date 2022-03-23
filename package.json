@@ -1,6 +1,7 @@
 {
   "name": "awkward-runner",
   "type": "module",
+  "version": "1.0.0",
   "scripts": {
     "start": "NODE_ENV=development webpack-dev-server",
     "build": "webpack"
@@ -15,6 +16,6 @@
     "webpack-dev-server": "^4.7.4"
   },
   "dependencies": {
-    "firebase": "^9.6.8"
+    "firebase": "^9.6.9"
   }
 }
