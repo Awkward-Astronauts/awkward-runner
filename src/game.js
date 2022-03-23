@@ -26,10 +26,16 @@ const canvas_ctx = canvas.getContext('2d');
 // Set up audio tracks
 const backgroundMusic = new Audio(assets.backgroundAudio);
 const jumpSoundEffect = new Audio(assets.jump2Audio);
-const deathSoundEffect = new Audio(assets.death2Audio);
+const deathSoundEffect = new Audio(assets.death1Audio);
+const alienSoundEffect = new Audio(assets.alienShipAudio);
+const meteorSoundEffect = new Audio(assets.meteorAudio);
 backgroundMusic.volume = 0.25;
 jumpSoundEffect.volume = 0.25;
 deathSoundEffect.volume = 0.25;
+alienSoundEffect.volume = 0.25;
+let alienSoundPlayed = false;
+meteorSoundEffect.volume = 0.25;
+let meteorSoundPlayed = false;
 
 const TABLET_MAX_SCREEN_WIDTH = 1024;
 const MOBILE_MAX_SCREEN_WIDTH = 767;
@@ -277,9 +283,22 @@ function event_loop() {
             // ******
 
             const CHARACTER_POSITION = characters_pool[i].get_position().get();
+            const CHARACTER_NAME = characters_pool[i].get_name();
+
+            if(CHARACTER_NAME === 'alien' && alienSoundPlayed === false) {
+              alienSoundEffect.play();
+              alienSoundPlayed = true;
+            }
+
+          if(CHARACTER_NAME === 'meteor' && meteorSoundPlayed === false) {
+            meteorSoundEffect.play();
+            meteorSoundPlayed = true;
+          }
 
             if (CHARACTER_POSITION[1] < -150) {
                 characters_pool.splice(i, 1);
+                if(CHARACTER_NAME === 'alien') alienSoundPlayed = false;
+                if(CHARACTER_NAME === 'meteor') meteorSoundPlayed = false;
                 continue;
             }
 
