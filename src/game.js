@@ -128,7 +128,7 @@ let harmfull_character_allocator = [
 function playMusic() {
   if(backgroundMusic.paused || is_first_time) {
     backgroundMusic.addEventListener('timeupdate', function(){
-      const buffer = .1
+      const buffer = .15
       if(this.currentTime > this.duration - buffer){
         this.currentTime = 0
         this.play().catch(err => console.log('Error starting music: ', err));
