@@ -4,8 +4,7 @@ import { applyVelocityToPosition, isCollided, Position, Velocity } from "./physi
 import { hiScoreRef, hiScoreValues} from "./firebase.js";
 import {getHiScoreLayout, getInitialsInput} from "./htmlLayouts.js";
 import { set } from 'firebase/database';
-import backgroundAudio from '../assets/audio/neon blue.mp3';
-import jumpAudio from '../assets/audio/jump.wav';
+
 import * as assets from './assets.js';
 
 const {
@@ -23,8 +22,11 @@ const {
 
 const canvas = document.getElementById("board");
 const canvas_ctx = canvas.getContext('2d');
-const backgroundMusic = new Audio(backgroundAudio);
-const jumpSoundEffect = new Audio(jumpAudio);
+
+// Set up audio tracks
+const backgroundMusic = new Audio(assets.backgroundAudio);
+backgroundMusic.volume = 0.25;
+const jumpSoundEffect = new Audio(assets.jumpAudio);
 jumpSoundEffect.volume = 0.25;
 
 const TABLET_MAX_SCREEN_WIDTH = 1024;
@@ -124,9 +126,14 @@ let harmfull_character_allocator = [
 ]
 
 function playMusic() {
-  backgroundMusic.loop = true;
-  backgroundMusic.volume = 0.25;
   if(backgroundMusic.paused || is_first_time) {
+    backgroundMusic.addEventListener('timeupdate', function(){
+      const buffer = .1
+      if(this.currentTime > this.duration - buffer){
+        this.currentTime = 0
+        this.play().catch(err => console.log('Error starting music: ', err));
+      }
+    });
     backgroundMusic.play().catch(err => console.log('Error starting music: ', err));
   }
 }
