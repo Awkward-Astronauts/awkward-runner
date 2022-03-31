@@ -1,7 +1,8 @@
 import { applyVelocityToPosition } from "./physics.js";
 
 export class CharacterMeta {
-    constructor(movements_array, movement_delay, position, velocity) {
+    constructor(name, movements_array, movement_delay, position, velocity) {
+        this._name = name;
         this._movements_array = movements_array;
         this._position = position;
         this._velocity = velocity;
@@ -10,6 +11,7 @@ export class CharacterMeta {
 
     clone() {
         return new CharacterMeta(
+            this._name,
             [...this._movements_array],
             this._movement_delay,
             this._position.clone(),
@@ -36,6 +38,10 @@ export class Character {
 
     get_layout() {
         return this._character_meta._movements_array[this._tick_counter % this._character_meta._movements_array.length];
+    }
+
+    get_name() {
+      return this._character_meta._name;
     }
 
     get_position() {
