@@ -14,15 +14,18 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
-export const hiScoreRef = ref(db, 'hiScore');
+export const hiScoreRef = ref(db, 'twitterHiScore');
+console.log('hiScoreRef', hiScoreRef);
 export let hiScoreValues = null;
 const hiScoreDiv = document.getElementById('hi-score');
 
 onValue(hiScoreRef, (snapshot) => {
+  console.log('snapshot', snapshot.val());
   if(snapshot.exists()) {
     hiScoreValues = snapshot.val();
     hiScoreDiv.innerHTML = getHiScoreLayout(hiScoreValues);
   } else {
+    console.log('DOES NOT EXIST');
     hiScoreDiv.innerHTML = "Well this is awkward... We can't seem to find the Hi Scores!";
   }
 });
