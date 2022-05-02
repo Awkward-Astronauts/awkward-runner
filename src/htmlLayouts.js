@@ -22,6 +22,7 @@ export function getHiScoreLayout(hiScoreValues) {
     `;
   }
   hiScoreHTML += `</table>`;
+  console.log('hiScoreHTML');
   return hiScoreHTML ;
 }
 
@@ -29,9 +30,9 @@ export function getInitialsInput(gameScore) {
   return `
     <span class="new-hi-score">New Hi Score!</span>
     <span class="game-score">${gameScore}!!!</span>
-    <span class="input-initials">Input up your Twitter handle (do not add the @ symbol)</span>
+    <span class="input-initials">Input your Twitter username (without the "at" symbol)</span>
     <div class="cursor">
-      <input type="text" id="initials" minlength="1" required />
+      <input type="text" id="initials" minlength="4" required />
     </div>
     <span class="press-enter">Press Enter to Submit</span>
     `;

@@ -317,7 +317,7 @@ function event_loop() {
         if (isCollided(astro_current_position.get()[0], astro_current_position.get()[1], astro_current_layout.length, astro_current_layout[0].length, HARMFULL_CHARACTER_POSITION.get()[0], HARMFULL_CHARACTER_POSITION.get()[1], HARMFULL_CHARACTER_LAYOUT.length, HARMFULL_CHARACTER_LAYOUT[0].length)) {
           const hiScorePosition = checkForHiScore();
           if(hiScorePosition !== undefined) {
-            showInitialsInput(hiScorePosition);
+            showTwitterUsernameInput(hiScorePosition);
           }
           canvas_ctx.textBaseline = 'middle';
           canvas_ctx.textAlign = 'center';
@@ -358,6 +358,27 @@ function checkForHiScore() {
       return i;
     }
   }
+}
+
+function showTwitterUsernameInput(scoreIndex) {
+
+  const hiScoreDiv = document.getElementById('hi-score');
+  hiScoreDiv.innerHTML = getInitialsInput(game_score);
+
+  const initialsInput = document.getElementById('initials');
+  initialsInput.focus();
+  initialsInput.addEventListener('keyup', (event) => {
+    if(event.code === 'Enter' || event.key === 'Enter') {
+      const initials = document.getElementById('initials').value;
+      const errorField = document.getElementById('error');
+      if (initials.length >= 5 && initials.length <= 15) {
+        errorField.innerHTML = '';
+        setNewHiScore(initials, scoreIndex);
+      } else {
+        errorField.innerHTML = 'You must enter a valid Twitter username.';
+      }
+    }
+  })
 }
 
 function showInitialsInput(scoreIndex) {
