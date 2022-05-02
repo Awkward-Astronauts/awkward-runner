@@ -14,7 +14,7 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
-export const hiScoreRef = ref(db, 'hiScore');
+export const hiScoreRef = ref(db, 'twitterHiScore');
 export let hiScoreValues = null;
 const hiScoreDiv = document.getElementById('hi-score');
 
